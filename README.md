@@ -2,6 +2,7 @@
 LvS (Learning via Surprisal)  Python code
 This repository contains the code for the LVS project.
 code shold be executed by LVS/data_process.py
+A demo project (name "demo" )  uploaded to demonstrate the functionality.
 
 ## Input data 
 * We accept 1 type of csv : freq - half processed data with frequencies 
