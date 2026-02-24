@@ -3,6 +3,10 @@
 This repository contains the code for the LVS project.
 
 # Default run (Command line) 
+If your datafile name is real.csv , you should edit in advance the configuration file [example : config_real.toml] , and place your input CSV file in  data/real/real.csv
+
+The command to execute the LvS algorithm is :
+
  LVS>  python3.11 ./data_process.py --config ./config_real.toml
 
 ## Input data 
@@ -29,9 +33,9 @@ This section contains the configuration for the database. The following keys are
 * `file_path2`: Optional : Additional input file with summary information [ None , or filename  ex - data/demo/population.csv]
 * `dataset`: The dataset name [ex - demo] 
  
-file_path  = data/demo/demo.csv
+file_path  = data/real/real.csv
 file_path2 = 
-dataset = demo 
+dataset = real 
 
 ### `[proc]` 
 This processing instructions
@@ -39,19 +43,19 @@ This processing instructions
 *  `var_name` = Country
 *  `value_name` = Marketcap
 *  `processing_type` = freq 
-*  `columns_to_remove` = E5,E6,E8  # columns that we like to remove from the original dataset 
+*  `columns_to_remove` = E5,E6,E8  # Optional - columns that we like to remove from the original dataset 
 
 ### `[output]`
-* `output_path` = results/cod/lvs.csv
-* `output_dic` = results/cod/dic.csv 
-* `sig_file` = results/cod/signatures.csv
+* `output_path` = results/real/lvs.csv
+* `output_dic` = results/real/dic.csv 
+* `sig_file` = results/real/signatures.csv
 * `graph` = [True/False] should we generate a graphs ? 
 * `top` =  N top most dynamic features
 * `sig_length` = length of signature (How many elements values in each signature) 
 * `short_names` = False  # Do we like to encode long column names from the original dataset , with a shorter codes
 ### `constants` 
-* `ignore_columns` = ['Entity','Code']
-* `columns_to_keep` = ['document', 'element', 'frequency_in_document']  
+* `ignore_columns` = ['Entity','Code'] # Optional
+* `columns_to_keep` = ['document', 'element', 'frequency_in_document']   # Optional
 
 Running full processing : data_process.py
 
