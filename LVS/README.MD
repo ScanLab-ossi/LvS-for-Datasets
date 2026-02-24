@@ -2,16 +2,20 @@
 
 This repository contains the code for the LVS project.
 
+# Default run 
+ LVS>  python3.11 ./data_process.py --config ./config_real.toml
+
 ## Input data 
 * We accept 1 type of csv : freq - half processed data with frequencies 
 For example : 
 
-| document |element | frequency_in_document|
+| Industry |Country | MarketCap|
 |---|---|---|
-|Brazil|fellow|12|
-|France |immediately|14|
-|France |impression|1|28|
-|USA |President|5| 
+|Electricity|Brazil|12|
+|Electricity|France |14|
+|Retail|France|28|
+|Retail|USA|53| 
+|Technology|USA|93| 
 
 ## Configuration
 
@@ -26,7 +30,7 @@ This section contains the configuration for the database. The following keys are
 * `dataset`: The dataset name [ex - demo] 
  
 file_path  = data/demo/demo.csv
-file_path2 = data/demo/population.csv
+file_path2 = 
 dataset = demo 
 
 ### `[proc]` 

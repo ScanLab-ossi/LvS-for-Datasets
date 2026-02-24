@@ -1,6 +1,8 @@
 #Always use 3.11.9 
-import os
+#!/usr/bin/env python3
+import argparse
 import configparser
+import os
 import pandas as pd
 import altair as alt
 from LPA import Corpus
@@ -345,48 +347,61 @@ def     process_data(file_path,agg_column,var_name,value_name,output_path,output
 
 
 
-def main():
-    # 1. Set up argument parser
-    #parser = argparse.ArgumentParser(description="Process data from a CSV file.")
-    #parser.add_argument("--config", help="Path to the config file", default="config.toml")
-    #args = parser.parse_args()
-    config_file_path = 'config_real.toml'  # Replace with your actual path
 
-    # 2. Read the config file
+def main():
+    # 1. Argument parser
+    parser = argparse.ArgumentParser(description="Process data from a config file.")
+    parser.add_argument(
+        "--config",
+        help="Path to the config file",
+        default="config_real.toml"
+    )
+    args = parser.parse_args()
+
+    # 2. Read config file from CLI argument
+    config_file_path = args.config
+
     config = configparser.ConfigParser()
-    #config.read(args.config)
-    config.read(config_file_path)
-    # 3. Get parameters from the config
+    read_files = config.read(config_file_path)
+    if not read_files:
+        raise FileNotFoundError(f"Config file not found: {config_file_path}")
+
+    # 3. Get parameters
     file_path = config.get("data", "file_path")
     file_path2 = config.get("data", "file_path2")    
-    agg_column=config.get("proc","agg_column")
-    var_name=config.get("proc","var_name") 
-    value_name=config.get("proc","value_name")  
-    processing_type = config.get("proc","processing_type")
-    columns_to_remove = config.get("proc", "columns_to_remove").split(',') if config.has_option("proc", "columns_to_remove") else []
-    # Convert to list if it's a comma-separated string
-    columns_to_remove = [col.strip() for col in columns_to_remove if col.strip()]  # Remove empty strings
-    # If the config file has no columns to remove, it will be an empty list 
-    if not columns_to_remove:
-        print("No columns to remove specified in the config file.")
-    else:
-        print(f"Columns to remove: {columns_to_remove}")    
-    #   
+    agg_column = config.get("proc", "agg_column")
+    var_name = config.get("proc", "var_name") 
+    value_name = config.get("proc", "value_name")  
+    processing_type = config.get("proc", "processing_type")
+
+    columns_to_remove = config.get("proc", "columns_to_remove", fallback="")
+    columns_to_remove = [c.strip() for c in columns_to_remove.split(",") if c.strip()]
+
     output_path = config.get("output", "output_path") 
     output_dic = config.get("output", "output_dic")  
     sig_file = config.get("output", "sig_file") 
     dataset = config.get("data", "dataset")
     graph = config.get("output", "graph")
-    top = config.get("output", "top")
-    sig_length = config.get("output", "sig_length")
-    short_names  = config.get("output", "short_names")
-    # constants 
-    #ignore_columns = ['Entity','Code']
-    #columns_to_keep = ['entity', 'element', 'frequency_in_document']  
-    ignore_columns = []
-    columns_to_keep = []
-    # 4. Call the processing function
-    process_data(file_path,agg_column,var_name,value_name,output_path,output_dic,processing_type,sig_file,dataset,graph,top,sig_length,short_names) 
-    
+    top = config.getint("output", "top")
+    sig_length = config.getint("output", "sig_length")
+    short_names = config.getboolean("output", "short_names")
+
+    # 4. Call processing
+    process_data(
+        file_path,
+        agg_column,
+        var_name,
+        value_name,
+        output_path,
+        output_dic,
+        processing_type,
+        sig_file,
+        dataset,
+        graph,
+        top,
+        sig_length,
+        short_names
+    )
+
 if __name__ == "__main__":
-    main() 
+    main()
