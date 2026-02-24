@@ -2,7 +2,7 @@
 
 This repository contains the code for the LVS project.
 
-# Default run 
+# Default run (Command line) 
  LVS>  python3.11 ./data_process.py --config ./config_real.toml
 
 ## Input data 
