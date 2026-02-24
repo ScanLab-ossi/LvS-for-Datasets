@@ -211,7 +211,7 @@ def generate_signatures(df, entity_code_df, sig_file, dataset,graph,top,sig_leng
         print(f"Element list saved to results/{dataset}/list.txt")
         print(df_list.columns)
         pivot_the_list = df_list.melt(var_name=var_name, value_name=value_name, ignore_index=False)
-        pivot_the_list = pivot_the_list.reset_index().rename(columns={'index': 'element'})
+        pivot_the_list = pivot_the_list.reset_index().rename(columns={'index': 'document'})
         df_list = pivot_the_list.dropna().reset_index(drop=True)   
         df_list.to_csv(f"results/{dataset}/list.csv", index=True)
         print(f"Element list saved to results/{dataset}/list.csv")      
@@ -241,10 +241,10 @@ def generate_signatures(df, entity_code_df, sig_file, dataset,graph,top,sig_leng
             df_merged = pd.merge(
             df_merged, 
             freq, 
-            left_on=['element_ob','element_observed'],   # Columns in the first DF (sig)
+            left_on= ['document','element_observed'],   # Columns in the first DF (sig)
             right_on=['document','element'],  # Columns in the second DF (dvr)
             how='outer'  , 
-            suffixes=('_m', '_base')
+            suffixes=('', '_base')
             )
             df_merged = df_merged.rename(columns={ 
                             'element_ob'  : 'key',
@@ -254,8 +254,16 @@ def generate_signatures(df, entity_code_df, sig_file, dataset,graph,top,sig_leng
             
             print (df_merged.head(10) )  
             docs = df_merged[['document']]
+            print (df_merged.head(10) )  
+            docs = df_merged[['document']]
+
+
 
             lvs_per_document.plot_document (df_merged,dataset,docs) 
+            #lvs_per_country.plot_document  (df_merged,dataset,docs) 
+            df_merged.to_csv(f"results/{dataset}/df_merged.csv", index=False)
+            docs.to_csv(f"results/{dataset}/docs.csv", index=False)
+
 
             # Top 10 distances chart
             try:
@@ -285,6 +293,7 @@ def generate_signatures(df, entity_code_df, sig_file, dataset,graph,top,sig_leng
     except Exception as e:
         print(f"Failure in generate_signatures: {e}")
         return None
+
 
 
 
@@ -341,7 +350,7 @@ def main():
     #parser = argparse.ArgumentParser(description="Process data from a CSV file.")
     #parser.add_argument("--config", help="Path to the config file", default="config.toml")
     #args = parser.parse_args()
-    config_file_path = 'config_demo.toml'  # Replace with your actual path
+    config_file_path = 'config_real.toml'  # Replace with your actual path
 
     # 2. Read the config file
     config = configparser.ConfigParser()
