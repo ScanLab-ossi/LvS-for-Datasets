@@ -7,21 +7,39 @@ If your datafile name is real.csv , you can  edit in advance the configuration f
 
 The output is saved in your local directory , named ./results/{dataset}/lvs_results.csv
 
+Running full processing : main.py
+
+| Parameter | Description |
+|---|---|
+| `file_path` | Path to the main CSV data file. | summary information. |
+| `dataset` | Name of the dataset. | 
+| `agg_column` | Column used for 1st level of aggregation (e.g., "Year"). |
+| `entity_name` |  Column used for 2nd level of aggregation  (e.g., "Cause"). |
+| `value_name` | Name of the frequency value column (e.g., "Deaths"). |
+| `output_path` | Path to the output CSV file containing processed data. |
+| `output_dic` | Path to the output CSV file containing a dictionary or mapping. |
+| `sig_file` | Path to the output CSV file for storing signatures. |
+| `graph` | should we generate a graphs ?  |
+| `top` | N top most dynamic features. |
+| `sig_length` | length of signature (How many elements values in each signature) |
+| `short_names`| Do we like to encode long column names from the original dataset , with a shorter codes| 
+
+
 The command to execute the LvS algorithm is :
 
- LVS>  python3.11   LVS-FOR-DATASETS/main.py   
---file_path  /Users/demo.csv 
---dataset market 
---agg_column Industry 
---entity_name Country
---value_name Marketcap 
---output_path results/market/allrenamedlvs.csv  
---output_dic  results/market/dic 
---sig_file    results/market/signatures.csv 
---graph True 
---top 5  
---sig_length 70  
---config LVS-FOR-DATASETS/config.ini
+ LVS>  python3.11   LVS-FOR-DATASETS/main.py  | 
+--file_path  /Users/demo.csv |
+--dataset market |
+--agg_column Industry |
+--entity_name Country |
+--value_name Marketcap |
+--output_path results/market/allrenamedlvs.csv  |
+--output_dic  results/market/dic |
+--sig_file    results/market/signatures.csv |
+--graph True |
+--top 5  |
+--sig_length 70  |
+--config LVS-FOR-DATASETS/config.ini |
 
 ## in 1 line : 
 /opt/homebrew/bin/python3.11 /Documents/GitHub/LVS-FOR-DATASETS/main.py   --file_path   /Documents/GitHub/LVS-FOR-DATASETS/demo.csv --dataset market --entity_name Country  --value_name Marketcap --output_path results/market/allrenamedlvs.csv  --output_dic results/market/dic --sig_file results/market/signatures.csv --graph True --top 5  --sig_length 70  --agg_column Industry
@@ -68,20 +86,3 @@ This section contains the output files locations
 * `top` =  N top most dynamic features
 * `sig_length` = length of signature (How many elements values in each signature) 
 * `short_names` = False  # Do we like to encode long column names from the original dataset , with a shorter codes 
-
-Running full processing : data_process.py
-
-| Parameter | Description |
-|---|---|
-| `file_path` | Path to the main CSV data file. | summary information. |
-| `dataset` | Name of the dataset. | 
-| `agg_column` | Column used for 1st level of aggregation (e.g., "Year"). |
-| `entity_name` |  Column used for 2nd level of aggregation  (e.g., "Cause"). |
-| `value_name` | Name of the frequency value column (e.g., "Deaths"). |
-| `output_path` | Path to the output CSV file containing processed data. |
-| `output_dic` | Path to the output CSV file containing a dictionary or mapping. |
-| `sig_file` | Path to the output CSV file for storing signatures. |
-| `graph` | should we generate a graphs ?  |
-| `top` | N top most dynamic features. |
-| `sig_length` | length of signature (How many elements values in each signature) |
-| `short_names`| Do we like to encode long column names from the original dataset , with a shorter codes| 
