@@ -83,11 +83,11 @@ def plot_final_analysis(df_doc, doc_id, secondary_col, filename):
  
 def plot_document (df,dataset,docs):
 
-    out_dir = f"results/{dataset}/all_test_lvs"
+    out_dir = f"results/{dataset}/lvs_graphs"
     if not os.path.exists(out_dir): os.makedirs(out_dir)
     print(docs)
     docs_list = docs['document'].dropna().unique()
     for dc in docs_list:
         subset = df[df['document'] == dc]
         # This now runs on a single Y-axis with scaled LvS values
-        plot_final_analysis(subset, dc, 'LvS', os.path.join(out_dir, f"LvSt_{dc}.png"))
+        plot_final_analysis(subset, dc, 'LvS', os.path.join(out_dir, f"LvS_{dc}.png"))

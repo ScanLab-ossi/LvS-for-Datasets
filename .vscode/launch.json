@@ -1,0 +1,38 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug with config",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "args": [
+        "--config", "config.ini"
+      ]
+    },
+    {
+      "name": "Debug with override",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "args": [
+        "--config", "config.ini",
+        "--file_path", "demo.csv",
+        "--dataset", "market", 
+        "--entity_name","Industry",
+        "--value_name","Marketcap",
+        "--output_path", "results/market/lvs.csv",
+        "--output_dic", "results/market/dic.csv",
+        "--sig_file", "results/market/signatures.csv",
+        "--graph", "True",
+        "--top", "20",
+        "--sig_length", "200",
+        "--short_names", "True"
+      ] 
+    }
+  ]
+}

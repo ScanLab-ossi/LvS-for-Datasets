@@ -9,11 +9,9 @@ from LPA import Corpus
 import lvs_per_document
 
 alt.data_transformers.disable_max_rows()
- 
-
 
 def load_data(file_path):
-
+    # read input csv data file and return as DataFrame
     try:
         df = pd.read_csv(file_path)
         print(f"Data successfully loaded from {file_path}")
@@ -26,8 +24,21 @@ def load_data(file_path):
         print(f"Error loading data: {e}")
         return None
     
-
-    
+def transform_names(df,agg_column,var_name,value_name):
+    #Use generic names for the columns to make the code more flexible and reusable.
+    print(agg_column,var_name,value_name)
+    # cast dynamically
+    df[agg_column] = df[agg_column].astype("string")  # keeps <NA> nicely
+    df[var_name] = df[var_name].astype("string")  # keeps <NA> nicely
+    df[value_name]=df[value_name].astype("float")
+    # Rename
+    df = df.rename(columns={agg_column: 'document',
+                            var_name  : 'element',
+                            value_name: 'frequency_in_document'}) 
+    # keep only 3 columns in the dataframe 
+    df = df[['document', 'element', 'frequency_in_document']]
+    return df    
+  
 def clean_data(df,short_names, dataset):
     """Cleans the DataFrame (e.g., keep only relevant columns , handles missing values, data type conversions)."""
     if df is None:
@@ -55,7 +66,6 @@ def clean_data(df,short_names, dataset):
         entity_code_df = None
         # Shorten the element names
         unique_elements = df['element'].unique()
-        #print(f"Unique elements: {unique_elements}")
         if short_names=='True':
             element_to_code = { element: f'E{i}' for i,  element  in enumerate(unique_elements) }
         else:
@@ -63,6 +73,7 @@ def clean_data(df,short_names, dataset):
             element_to_code = {element: element for i, element in enumerate(unique_elements)}
             
         df_cleaned['element'] = df_cleaned['element'].map(element_to_code)  
+
         # Create a DataFrame from the dictionary
         entity_code_df = pd.DataFrame(list(element_to_code.items()), columns=['element_name', 'element']) 
         return df_cleaned, entity_code_df
@@ -72,7 +83,7 @@ def clean_data(df,short_names, dataset):
     except Exception as e:
         print(f"Error during data cleaning: {e}")
         return None, None
- 
+    
 def transform_names(df,agg_column,var_name,value_name):
     print(agg_column,var_name,value_name)
     # cast dynamically
@@ -85,7 +96,7 @@ def transform_names(df,agg_column,var_name,value_name):
                             value_name: 'frequency_in_document'}) 
     # keep only 3 columns in the dataframe 
     df = df[['document', 'element', 'frequency_in_document']]
-    return df  
+    return df   
 
 def save_results(df,entity_code_df, output_path,output_dic):
     if df is None:
@@ -104,13 +115,6 @@ def save_results(df,entity_code_df, output_path,output_dic):
             print(f"Dictionary successfully saved to {output_path.replace('.csv', '_dict.csv')}")
     except Exception as e:
         print(f"Error saving results: {e}")
-
-
-
-
-
-
-
 def generate_signatures(df, entity_code_df, sig_file, dataset,graph,top,sig_length,var_name,value_name):
     """
     Generates and saves document signatures, along with related analyses and visualizations.
@@ -226,7 +230,7 @@ def generate_signatures(df, entity_code_df, sig_file, dataset,graph,top,sig_leng
         freq['freq_norm'] = freq['frequency_in_document'] / freq['doc_total']
         print(freq.head(10))
                
-        if graph == 'True':
+        if graph == True:
             df_observed=df_list 
             df_observed = df_observed.rename(columns={ 
                             var_name  : 'element_observed',
@@ -263,7 +267,7 @@ def generate_signatures(df, entity_code_df, sig_file, dataset,graph,top,sig_leng
 
             lvs_per_document.plot_document (df_merged,dataset,docs) 
             #lvs_per_country.plot_document  (df_merged,dataset,docs) 
-            df_merged.to_csv(f"results/{dataset}/df_merged.csv", index=False)
+            df_merged.to_csv(f"results/{dataset}/lvs_results.csv", index=False)
             docs.to_csv(f"results/{dataset}/docs.csv", index=False)
 
 
@@ -286,11 +290,11 @@ def generate_signatures(df, entity_code_df, sig_file, dataset,graph,top,sig_leng
                     .encode(x="document:N", y="Distance from expected", color="element")
                     .properties(width=300, height=300, title="")
                 )
-                chart.save(f"results/{dataset}/top_10_distances.png", scale_factor=4.0)
-                print(f"Top 10 distances chart saved to results/{dataset}/top_10_distances.png")
+                chart.save(f"results/{dataset}/top_{top}_distances.png", scale_factor=4.0)
+                print(f"Top {top} distances chart saved to results/{dataset}/top_{top}_distances.png")
             except Exception as e:
-                print(f"Error generating or saving top 10 distances chart: {e}")
- 
+                print(f"Error generating or saving top {top} distances chart: {e}")
+
 
     except Exception as e:
         print(f"Failure in generate_signatures: {e}")
@@ -303,17 +307,14 @@ def generate_signatures(df, entity_code_df, sig_file, dataset,graph,top,sig_leng
 # Reuse the functions from the basic example
 # clean_data, filter_data, calculate_summary, save_results
 
-def     process_data(file_path,agg_column,var_name,value_name,output_path,output_dic,processing_type,sig_file,dataset,graph,top,sig_length,short_names):
+def     process_data(file_path,agg_column,var_name,value_name,output_path,output_dic,sig_file,dataset,graph,top,sig_length,short_names):
     """
     Pipeline function to load, unpivot, clean, and save data.
 
     Args:
-        file_path (str): Path to the input CSV file.
-        file_path2 (str): Path to the second input CSV file.
-        ignore_columns (list): List of columns to ignore during unpivoting.
-        columns_to_keep (dict): Columns to keep and their new names.
+        file_path (str): Path to the input CSV file. 
         agg_column (str): Column to aggregate by during unpivoting.
-        var_name (str): Name for the variable column after unpivoting.
+        var_name (str): (also called Entity_name)   for the variable column after unpivoting.
         value_name (str): Name for the value column after unpivoting.
         output_path (str): Path to save the processed CSV file.
         output_dic (dict, optional): Dictionary to save as a CSV file.
@@ -344,64 +345,133 @@ def     process_data(file_path,agg_column,var_name,value_name,output_path,output
     generate_signatures(df_cleaned,entity_code_df,sig_file,dataset,graph,top,sig_length,var_name,value_name)  
     print("signatures execution complete!")
 
+import argparse
+import configparser
+import os
 
 
+def str2bool(value):
+    if isinstance(value, bool):
+        return value
+    value = value.lower()
+    if value in {"true", "1", "yes", "y", "on"}:
+        return True
+    if value in {"false", "0", "no", "n", "off"}:
+        return False
+    raise argparse.ArgumentTypeError(f"Invalid boolean value: {value}")
 
 
 def main():
-    # 1. Argument parser
-    parser = argparse.ArgumentParser(description="Process data from a config file.")
-    parser.add_argument(
-        "--config",
-        help="Path to the config file",
-        default="config_real.toml"
-    )
+    parser = argparse.ArgumentParser(description="CLI first, config as fallback")
+
+    parser.add_argument("--config", default="config.ini", help="Path to config file")
+
+    parser.add_argument("--file_path", help="Input file path")
+    parser.add_argument("--dataset", help="Dataset name")
+    parser.add_argument("--agg_column", help="Aggregation column")
+    parser.add_argument("--entity_name", help="Entity name column")
+    parser.add_argument("--value_name", help="Value column")
+
+    parser.add_argument("--output_path", help="Output file path")
+    parser.add_argument("--output_dic", help="Output dictionary path")
+    parser.add_argument("--sig_file", help="Signature file path")
+
+    parser.add_argument("--graph", type=str2bool, help="Whether to generate graph")
+    parser.add_argument("--top", type=int, help="Number of top items to show")
+    parser.add_argument("--sig_length", type=int, help="Signature length")
+    parser.add_argument("--short_names", type=str2bool, help="Whether to use short names")
+
     args = parser.parse_args()
 
-    # 2. Read config file from CLI argument
-    config_file_path = args.config
-
+    # Read config if it exists
     config = configparser.ConfigParser()
-    read_files = config.read(config_file_path)
-    if not read_files:
-        raise FileNotFoundError(f"Config file not found: {config_file_path}")
+    config_loaded = False
+    if args.config and os.path.exists(args.config):
+        config.read(args.config)
+        config_loaded = True
+        print(f"Config file loaded: {args.config}")
+    else:
+        print(f"No config file found at: {args.config}")
 
-    # 3. Get parameters
-    file_path = config.get("data", "file_path")
-    file_path2 = config.get("data", "file_path2")    
-    agg_column = config.get("proc", "agg_column")
-    var_name = config.get("proc", "var_name") 
-    value_name = config.get("proc", "value_name")  
-    processing_type = config.get("proc", "processing_type")
+    def get_value(cli_value, section, key, fallback=None, value_type=str):
+        """CLI overrides config; config fills missing values; otherwise fallback."""
+        if cli_value is not None:
+            return cli_value
 
-    columns_to_remove = config.get("proc", "columns_to_remove", fallback="")
-    columns_to_remove = [c.strip() for c in columns_to_remove.split(",") if c.strip()]
+        if config_loaded and config.has_section(section) and config.has_option(section, key):
+            if value_type is bool:
+                return config.getboolean(section, key)
+            if value_type is int:
+                return config.getint(section, key)
+            return config.get(section, key)
 
-    output_path = config.get("output", "output_path") 
-    output_dic = config.get("output", "output_dic")  
-    sig_file = config.get("output", "sig_file") 
-    dataset = config.get("data", "dataset")
-    graph = config.get("output", "graph")
-    top = config.getint("output", "top")
-    sig_length = config.getint("output", "sig_length")
-    short_names = config.getboolean("output", "short_names")
+        return fallback
 
-    # 4. Call processing
+    # Resolve values: CLI first, then config, then fallback
+    file_path = get_value(args.file_path, "data", "file_path")
+    dataset = get_value(args.dataset, "data", "dataset")
+    agg_column = get_value(args.agg_column, "proc", "agg_column")
+    entity_name = get_value(args.entity_name, "proc", "entity_name")
+    value_name = get_value(args.value_name, "proc", "value_name")
+
+    output_path = get_value(args.output_path, "output", "output_path")
+    output_dic = get_value(args.output_dic, "output", "output_dic")
+    sig_file = get_value(args.sig_file, "output", "sig_file")
+
+    graph = get_value(args.graph, "output", "graph", fallback=False, value_type=bool)
+    top = get_value(args.top, "output", "top", fallback=25, value_type=int)
+    sig_length = get_value(args.sig_length, "output", "sig_length", fallback=200, value_type=int)
+    short_names = get_value(args.short_names, "output", "short_names", fallback=False, value_type=bool)
+
+    # Required fields check
+    required = {
+        "file_path": file_path,
+        "dataset": dataset,
+        "agg_column": agg_column,
+        "entity_name": entity_name,
+        "value_name": value_name,
+        "output_path": output_path,
+        "output_dic": output_dic,
+        "sig_file": sig_file,
+    }
+
+    missing = [key for key, value in required.items() if value is None]
+    if missing:
+        raise ValueError(
+            "Missing required parameters: "
+            + ", ".join(missing)
+            + ". Provide them via command line or config file."
+        )
+
+    print("=== VALUES ===")
+    print(f"file_path: {file_path}")
+    print(f"dataset: {dataset}")
+    print(f"agg_column: {agg_column}")
+    print(f"entity_name: {entity_name}")
+    print(f"value_name: {value_name}")
+    print(f"output_path: {output_path}")
+    print(f"output_dic: {output_dic}")
+    print(f"sig_file: {sig_file}")
+    print(f"graph: {graph}")
+    print(f"top: {top}")
+    print(f"sig_length: {sig_length}")
+    print(f"short_names: {short_names}")
+
     process_data(
         file_path,
         agg_column,
-        var_name,
+        entity_name,
         value_name,
         output_path,
         output_dic,
-        processing_type,
         sig_file,
         dataset,
         graph,
         top,
         sig_length,
-        short_names
+        short_names,
     )
+
 
 if __name__ == "__main__":
     main()
