@@ -61,7 +61,7 @@ You can either:
 ### Example command
 
 ```bash
-/opt/homebrew/bin/python3.11 /Documents/GitHub/LVS-FOR-DATASETS/main.py   --file_path /Documents/GitHub/LVS-FOR-DATASETS/demo.csv   --dataset market   --agg_column Industry   --entity_name Country   --value_name Marketcap   --output_path results/market/allrenamedlvs.csv   --output_dic results/market/dic.csv   --sig_file results/market/signatures.csv   --graph True   --top 5   --sig_length 70
+/opt/homebrew/bin/python3.11 /Documents/GitHub/LVS-FOR-DATASETS/main.py   --file_path /Documents/GitHub/LVS-FOR-DATASETS/demo.csv   --dataset market   --agg_column Industry   --entity_name Country   --value_name Marketcap   --output_path results/market/lvs.csv   --output_dic results/market/dic.csv   --sig_file results/market/signatures.csv   --graph True   --top 5   --sig_length 70
 ```
 
 ---
@@ -103,8 +103,8 @@ A typical run creates files under the dataset results directory.
 
 ```text
 results/
-└── market/
-    ├── allrenamedlvs.csv
+└── dataset/
+    ├── lvs.csv
     ├── dic.csv
     └── signatures.csv
 ```
@@ -122,7 +122,7 @@ results/
 
 ```ini
 [data]
-file_path = documents/demo/real.csv
+file_path = documents/demo/demo.csv
 dataset = market
 
 [proc]
@@ -131,9 +131,9 @@ entity_name = Country
 value_name = Marketcap
 
 [output]
-output_path = results/real/lvs.csv
-output_dic = results/real/dic.csv
-sig_file = results/real/signatures.csv
+output_path = results/demo/lvs.csv
+output_dic = results/demo/dic.csv
+sig_file = results/demo/signatures.csv
 graph = True
 top = 5
 sig_length = 70
