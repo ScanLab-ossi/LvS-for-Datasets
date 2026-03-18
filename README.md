@@ -69,8 +69,7 @@ You can either:
 
 | Parameter | Required | Description |
 |----------|--------|------------|
-| Parameter | Required | Description |
-|---|---:|---|
+| Parameter | Required | Description | 
 | `file_path` | Yes | Path to the main CSV input file. |
 | `dataset` | Yes | Logical dataset name used for organizing outputs. |
 | `agg_column` | Yes | First-level aggregation column, for example `Industry`. |
@@ -141,7 +140,7 @@ sig_length = 70
 short_names = False
 ```
 
----
+ 
 ---
 
 # 🧠 Conceptual Background
