@@ -112,8 +112,8 @@ results/
 
 # 🧪 Example Visual Outputs
 
-![Pharmaceuticals](LvS_Pharmaceuticals.png)
-![Food](LvS_Food.png) 
+![Pharmaceuticals](fig/LvS_Pharmaceuticals.png)
+![Food](fig/LvS_Food.png) 
 ---
 
 # ⚙️ Configuration File Example
