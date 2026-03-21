@@ -37,6 +37,10 @@ def transform_names(df,agg_column,var_name,value_name):
                             value_name: 'frequency_in_document'}) 
     # keep only 3 columns in the dataframe 
     df = df[['document', 'element', 'frequency_in_document']]
+    #df['element'] = df['element'].str.replace(r'[^\w\s]', '_', regex=True)  
+    #df['document'] = df['document'].str.replace(r'[^\w\s]', '_', regex=True)  
+    df["element"] = df["element"].str.replace("/", "_", regex=False)
+    df["document"] = df["document"].str.replace("/", "_", regex=False)
     return df    
   
 def clean_data(df,short_names, dataset):
@@ -185,13 +189,16 @@ def generate_signatures(df, entity_code_df, sig_file, dataset,graph,top,sig_leng
             row = row[row.notnull()]
 
             row_df = row.to_frame(name=f'row_{index}_data')
-
             # Pivot the result. For a single row DataFrame, transposing it achieves the desired pivoted effect.
             pivoted_df = row_df 
 
 
             # Define a unique filename for each new CSV file
-            file_name = os.path.join(output_dir, f'row_{index}.csv') 
+
+            clean_index = str(index).replace("/", "_")  # Replace any slashes in the index to avoid file path issues
+            file_name = os.path.join(output_dir, f'row_{clean_index}.csv') 
+            
+            print (f"Processing row {index} into {file_name} with data:\n{row_df}\n")    
 
             # If the DataFrame is empty after dropping NaN columns, skip saving
             if pivoted_df.empty:    
@@ -288,7 +295,7 @@ def generate_signatures(df, entity_code_df, sig_file, dataset,graph,top,sig_leng
                     )
                     .mark_line()
                     .encode(x="document:N", y="Distance from expected", color="element")
-                    .properties(width=300, height=300, title="")
+                    .properties(width=1200, height=300, title="")
                 )
                 chart.save(f"results/{dataset}/top_{top}_distances.png", scale_factor=4.0)
                 print(f"Top {top} distances chart saved to results/{dataset}/top_{top}_distances.png")

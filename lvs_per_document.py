@@ -89,5 +89,6 @@ def plot_document (df,dataset,docs):
     docs_list = docs['document'].dropna().unique()
     for dc in docs_list:
         subset = df[df['document'] == dc]
+        fixed_filename = dc.replace("/", "_")  # Replace any slashes in the document name to avoid file path issues
         # This now runs on a single Y-axis with scaled LvS values
-        plot_final_analysis(subset, dc, 'LvS', os.path.join(out_dir, f"LvS_{dc}.png"))
+        plot_final_analysis(subset, dc, 'LvS', os.path.join(out_dir, f"LvS_{fixed_filename}.png"))
